@@ -28,9 +28,6 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # DEBUG = str(os.environ.get("DJANGO_DEBUG")).lower() == "true"
 DEBUG = config("DJANGO_DEBUG", cast=bool)
 
-
-print("DEBUG", DEBUG, type(DEBUG))
-
 ALLOWED_HOSTS = [".railway.app"]  # saas,prod.railway.app
 if DEBUG:
     ALLOWED_HOSTS += [
@@ -50,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # My Apps
     "visits",
+    "commando",
 ]
 
 MIDDLEWARE = [
@@ -143,6 +141,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_BASE_DIR = BASE_DIR / "staticfiles"
+STATICFILES_BASE_DIR.mkdir(exist_ok=True, parents=True)
 STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / "vendors"
 
 # source(s) for python manage.py collecstatic

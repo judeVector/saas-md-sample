@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth_ui %}
+{% load widget_tweaks %}
+{% block title %}{{ block.super }} - Sign In{% endblock title%}
+
+{% block content %}
+{% trans "Sign In" as heading %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+    <h2 class="text-2xl font-bold mb-6 text-center">{{ heading }}</h2>
+    {% if not SOCIALACCOUNT_ONLY %}
+    <div class="py-3 text-center">
+        {% blocktranslate %}
+        If you have not created an account yet, then please
+        <a class="text-blue-500 hover:underline" href="{{ signup_url }}">sign up</a> first.
+        {% endblocktranslate %}
+    </div>
+    {% url 'account_login' as action_url %}
+    <form method="post" action="{{ action_url }}" class="space-y-6">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.login.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                {{ form.login.label }}
+            </label>
+            {{ form.login|add_class:"w-full rounded-md" }}
+            {% if form.login.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ form.login.errors }}</p>
+            {% endif %}
+        </div>
+        <div>
+            <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                {{ form.password.label }}
+            </label>
+            {{ form.password|add_class:"w-full rounded-md" }}
+            {% if form.password.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ form.password.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="flex items-center">
+            <label class="cursor-pointer flex items-center">
+                {{ form.remember }}
+                <span class="ml-2">Remember me</span>
+            </label>
+        </div>
+        {{ redirect_field }}
+        <div class="flex flex-col">
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                {{ heading }}
+            </button>
+            <a class="mt-2 text-sm text-blue-500 hover:underline self-end"
+                href="{% url 'account_reset_password' %}">Forgot password?</a>
+        </div>
+    </form>
+    {% endif %}
+
+    {% if LOGIN_BY_CODE_ENABLED %}
+    <div class="mt-6">
+        <hr class="my-6">
+        <a href="{{ request_login_code_url }}"
+            class="w-full inline-block py-2 px-4 bg-gray-200 text-gray-700 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 text-center">
+            {% trans "Mail me a sign-in code" %}
+        </a>
+    </div>
+    {% endif %}
+
+    {% if SOCIALACCOUNT_ENABLED %}
+    <div class="mt-6">
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

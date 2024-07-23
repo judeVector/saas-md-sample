@@ -1,0 +1,6 @@
+components:
+  button:
+    template: "components/button.html"
+    props:
+      - text
+      - type

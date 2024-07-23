@@ -1,5 +1,5 @@
 """
-URL configuration for technest project.
+URL configuration for saasproj project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,12 +16,11 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-
-from .views import home_view, about_view
+from django.urls import path, include
 
 urlpatterns = [
-    path("", home_view),
-    path("about/", about_view),
-    path("admin/", admin.site.urls),
+    path("", include("auth_app.urls")),
+    path("", include("visits.urls")),
+    path("accounts/", include("allauth.urls")),
+    path("admin/", admin.site.urls, name="admin"),
 ]

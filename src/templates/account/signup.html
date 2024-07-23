@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth_ui %}
+{% load widget_tweaks %}
+{% block title %}{{ block.super }} - Sign Up{% endblock title%}
+
+{% block content %}
+{% trans "Sign Up" as heading %}
+{% blocktranslate asvar subheading %}Already have an account? Then please <a href="{{ login_url }}"
+    class="text-blue-500 hover:underline">sign
+    in</a>.{% endblocktranslate %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+    <h2 class="text-2xl font-bold mb-6 text-center">{{ heading }}</h2>
+    <p class="py-3 text-center">{{ subheading|safe }}</p>
+    {% if not SOCIALACCOUNT_ONLY %}
+    {% url 'account_signup' as action_url %}
+    <form method="post" action="{{ action_url }}" class="space-y-6">
+        {% csrf_token %}
+        {{ redirect_field }}
+        {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                {{ field.label }}
+            </label>
+            {{ field|add_class:"w-full rounded-md" }}
+            {% if field.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="flex flex-col">
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                {{ heading }}
+            </button>
+        </div>
+    </form>
+    {% endif %}
+    {% if SOCIALACCOUNT_ENABLED %}
+    <div class="mt-6">
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

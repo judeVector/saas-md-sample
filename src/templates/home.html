@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<h1>Hello Again!!</h1>
+<h1>Hello {{ user.username }}!!</h1>
+<a href="/accounts/login" class="text-blue-500">Register Here</a>
+<a href="/accounts/logout" class="text-red-500">Logout Here</a>
 <p>Page visits: {{ page_visit_count }}</p>
 <p>Percent: {{ percent }}%</p>
 <p>Total visits: {{ total_visit_count }}</p>

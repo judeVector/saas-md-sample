@@ -48,12 +48,12 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # DEBUG = str(os.environ.get("DJANGO_DEBUG")).lower() == "true"
 DEBUG = config("DJANGO_DEBUG", cast=bool)
 
-ALLOWED_HOSTS = [".railway.app"]  # saas,prod.railway.app
+ALLOWED_HOSTS = [".railway.app", "https://saas.up.railway.app"]  # saas,prod.railway.app
+
+CSRF_TRUSTED_ORIGINS = ["https://saas.up.railway.app"]
+
 if DEBUG:
-    ALLOWED_HOSTS += [
-        "127.0.0.1",
-        "localhost",
-    ]
+    ALLOWED_HOSTS += ["127.0.0.1", "localhost"]
 
 
 # Application definition

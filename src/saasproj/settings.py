@@ -26,7 +26,6 @@ EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", cast=str, default=None)
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", cast=str, default=None)
 
-
 ADMIN_USER_NAME = config("ADMIN_USER_NAME", default="Admin user")
 ADMIN_USER_EMAIL = config("ADMIN_USER_EMAIL", default=None)
 
@@ -69,10 +68,13 @@ INSTALLED_APPS = [
     "visits",
     "commando",
     "auth_app",
+    "profiles",
     # Third party apps
     "allauth_ui",
     "allauth",
     "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
     "widget_tweaks",
     "slippers",
 ]
@@ -121,7 +123,6 @@ DATABASES = {
     }
 }
 
-
 CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=30)
 DATABASE_URL = config("DATABASE_URL", default=None)
 
@@ -133,7 +134,6 @@ if DATABASE_URL is not None:
             default=DATABASE_URL, conn_health_checks=True, conn_max_age=CONN_MAX_AGE
         )
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -167,7 +167,7 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS = {"github": {"VERIFIED_EMAIL": True}}
 
 
 # Internationalization
@@ -176,8 +176,11 @@ SOCIALACCOUNT_PROVIDERS = {}
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
+# TIME_ZONE = "Asia/Dubai"
 
 USE_I18N = True
+
+# USE_L10N = True
 
 USE_TZ = True
 

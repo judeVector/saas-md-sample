@@ -17,10 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from .views import pw_protected_view, user_only_view
 
 urlpatterns = [
     path("", include("auth_app.urls")),
     path("", include("visits.urls")),
+    path("protected/", pw_protected_view),
+    path("protected/user-only", user_only_view),
     path("accounts/", include("allauth.urls")),
+    path("profiles/", include("profiles.urls")),
     path("admin/", admin.site.urls, name="admin"),
 ]

@@ -22,6 +22,7 @@ from .views import pw_protected_view, user_only_view
 urlpatterns = [
     path("", include("auth_app.urls")),
     path("", include("visits.urls")),
+    path("", include("subscriptions.urls")),
     path("protected/", pw_protected_view),
     path("protected/user-only", user_only_view),
     path("accounts/", include("allauth.urls")),

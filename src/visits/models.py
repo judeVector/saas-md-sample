@@ -6,3 +6,6 @@ class PageVisit(models.Model):
     # db -> table
     path = models.TextField(blank=True, null=True)  # col
     timestamp = models.DateTimeField(auto_now_add=True)  # col
+
+    def __str__(self):
+        return self.path

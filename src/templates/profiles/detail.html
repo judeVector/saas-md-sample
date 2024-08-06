@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title%}
+
+{% block content %}
+
+<h1>Welcome <span class="text-blue-500 underline">{{ user.username }}</span>!!</h1>
+{{ user.last_login}}
+<p>Hello</p>
+
+{% endblock %}

@@ -83,9 +83,18 @@ class SubscriptionPrice(models.Model):
     )
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    features = models.TextField(
+        help_text="Features for pricing seperated by new line", blank=True, null=True
+    )
 
     class Meta:
         ordering = ["subscription__order", "order", "featured", "-updated"]
+
+    @property
+    def display_sub_name(self):
+        if not self.subscription:
+            return "Plan"
+        return self.subscription.name
 
     @property
     def stripe_currency(self):

@@ -47,6 +47,8 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # DEBUG = str(os.environ.get("DJANGO_DEBUG")).lower() == "true"
 DEBUG = config("DJANGO_DEBUG", cast=bool)
 
+BASE_URL = config("BASE_URL", default=None)
+
 ALLOWED_HOSTS = [".railway.app", "https://saas.up.railway.app"]  # saas,prod.railway.app
 
 CSRF_TRUSTED_ORIGINS = ["https://saas.up.railway.app"]
@@ -71,6 +73,7 @@ INSTALLED_APPS = [
     "profiles",
     "subscriptions",
     "customers",
+    "checkouts",
     # Third party apps
     "allauth_ui",
     "allauth",

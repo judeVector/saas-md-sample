@@ -23,6 +23,7 @@ urlpatterns = [
     path("", include("auth_app.urls")),
     path("", include("visits.urls")),
     path("", include("subscriptions.urls")),
+    path("", include("checkouts.urls")),
     path("protected/", pw_protected_view),
     path("protected/user-only", user_only_view),
     path("accounts/", include("allauth.urls")),

@@ -27,6 +27,7 @@ class Subscription(models.Model):
     """
 
     name = models.CharField(max_length=120)
+    subtitle = models.TextField(null=True, blank=True)
     groups = models.ManyToManyField(Group)
     active = models.BooleanField(default=True)
     permissions = models.ManyToManyField(
@@ -106,6 +107,12 @@ class SubscriptionPrice(models.Model):
         if not self.subscription:
             return "Plan"
         return self.subscription.name
+
+    @property
+    def display_sub_subtitle(self):
+        if not self.subscription:
+            return "Plan"
+        return self.subscription.subtitle
 
     @property
     def stripe_currency(self):

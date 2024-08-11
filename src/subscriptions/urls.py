@@ -5,4 +5,5 @@ app_name = "subscriptions"
 
 urlpatterns = [
     path("pricing/", subscription_price_view, name="pricing"),
+    path("pricing/<str:interval>/", subscription_price_view, name="pricing_interval"),
 ]

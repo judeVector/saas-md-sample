@@ -47,7 +47,7 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # DEBUG = str(os.environ.get("DJANGO_DEBUG")).lower() == "true"
 DEBUG = config("DJANGO_DEBUG", cast=bool)
 
-BASE_URL = config("BASE_URL", default=None)
+BASE_URL = config("BASE_URL", default="http://localhost:8000/")
 
 ALLOWED_HOSTS = [".railway.app", "https://saas.up.railway.app"]  # saas,prod.railway.app
 

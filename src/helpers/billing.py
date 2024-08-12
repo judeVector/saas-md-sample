@@ -87,6 +87,15 @@ def get_subscription(stripe_id, raw=True):
     return response.url
 
 
+def cancel_subscription(stripe_id, reason="", feedback="other", raw=True):
+    response = stripe.Subscription.cancel(
+        stripe_id, cancellation_details={"comment": reason, "feedback": feedback}
+    )
+    if raw:
+        return response
+    return response.url
+
+
 def get_checkout_customer_plan(session_id):
     checkout_response = get_checkout_session(session_id, raw=True)
     customer_id = checkout_response.customer
@@ -95,4 +104,4 @@ def get_checkout_customer_plan(session_id):
     subscription_response = get_subscription(subscription_stripe_id, raw=True)
 
     subscription_plan = subscription_response.plan
-    return customer_id, subscription_plan.id
+    return customer_id, subscription_plan.id, subscription_stripe_id

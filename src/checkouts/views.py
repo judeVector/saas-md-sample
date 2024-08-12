@@ -55,10 +55,11 @@ def checkout_redirect_view(request):
 
 def checkout_finalize_view(request):
     session_id = request.GET.get("session_id")
-    customer_id, plan_id = billing.get_checkout_customer_plan(session_id)
+    customer_id, plan_id, subscription_stripe_id = billing.get_checkout_customer_plan(
+        session_id
+    )
 
     price_qs = SubscriptionPrice.objects.filter(stripe_id=plan_id)
-    print(price_qs)
 
     try:
         subscription_object = Subscription.objects.get(
@@ -78,7 +79,9 @@ def checkout_finalize_view(request):
         _user_sub_exists = True
     except UserSubscription.DoesNotExist:
         _user_sub_object = UserSubscription.objects.create(
-            user=user_object, subcription=subscription_object
+            user=user_object,
+            subscription=subscription_object,
+            stripe_id=subscription_stripe_id,
         )
     except:
         _user_sub_object = None
@@ -90,9 +93,16 @@ def checkout_finalize_view(request):
 
     if _user_sub_exists:
         # Cancel old subscriptions
-
+        old_stripe_id = _user_sub_object.stripe_id
+        if old_stripe_id is not None:
+            billing.cancel_subscription(
+                old_stripe_id,
+                reason="Auto ended new membership subscription",
+                feedback="other",
+            )
         # Assign new subscriptions
         _user_sub_object.subscription = subscription_object
+        _user_sub_object.stripe_id = subscription_stripe_id
         _user_sub_object.save()
 
     context = {}

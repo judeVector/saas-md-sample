@@ -3,6 +3,8 @@
 import stripe
 from decouple import config
 
+from . import date_utils
+
 DJANGO_DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default=None, cast=str)
 
@@ -104,4 +106,20 @@ def get_checkout_customer_plan(session_id):
     subscription_response = get_subscription(subscription_stripe_id, raw=True)
 
     subscription_plan = subscription_response.plan
-    return customer_id, subscription_plan.id, subscription_stripe_id
+
+    current_period_start = date_utils.timestamp_as_datetime(
+        subscription_response.current_period_start
+    )
+    print(current_period_start)
+    current_period_end = date_utils.timestamp_as_datetime(
+        subscription_response.current_period_end
+    )
+    print(current_period_end)
+    data = {
+        "customer_id": customer_id,
+        "plan_id": subscription_plan.id,
+        "subscription_stripe_id": subscription_stripe_id,
+        "current_period_start": current_period_start,
+        "current_period_end": current_period_end,
+    }
+    return data

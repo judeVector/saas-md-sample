@@ -55,11 +55,13 @@ def checkout_redirect_view(request):
 
 def checkout_finalize_view(request):
     session_id = request.GET.get("session_id")
-    customer_id, plan_id, subscription_stripe_id = billing.get_checkout_customer_plan(
-        session_id
-    )
+    checkout_data = billing.get_checkout_customer_plan(session_id)
 
-    price_qs = SubscriptionPrice.objects.filter(stripe_id=plan_id)
+    plan_id = checkout_data.get("plan_id")
+    customer_id = checkout_data.get("customer_id")
+    subscription_stripe_id = checkout_data.get("subscription_stripe_id")
+    current_period_start = checkout_data.get("current_period_start")
+    current_period_end = checkout_data.get("current_period_end")
 
     try:
         subscription_object = Subscription.objects.get(
@@ -74,14 +76,20 @@ def checkout_finalize_view(request):
         user_object = None
 
     _user_sub_exists = False
+
+    updated_sub_options = {
+        "subscription": subscription_object,
+        "stripe_id": subscription_stripe_id,
+        "user_cancelled": False,
+        "current_period_start": current_period_start,
+        "current_period_end": current_period_end,
+    }
     try:
         _user_sub_object = UserSubscription.objects.get(user=user_object)
         _user_sub_exists = True
     except UserSubscription.DoesNotExist:
         _user_sub_object = UserSubscription.objects.create(
-            user=user_object,
-            subscription=subscription_object,
-            stripe_id=subscription_stripe_id,
+            user=user_object, **updated_sub_options
         )
     except:
         _user_sub_object = None
@@ -94,15 +102,20 @@ def checkout_finalize_view(request):
     if _user_sub_exists:
         # Cancel old subscriptions
         old_stripe_id = _user_sub_object.stripe_id
-        if old_stripe_id is not None:
-            billing.cancel_subscription(
-                old_stripe_id,
-                reason="Auto ended new membership subscription",
-                feedback="other",
-            )
+        same_stripe_id = subscription_stripe_id == old_stripe_id
+        if old_stripe_id is not None and not same_stripe_id:
+            try:
+                billing.cancel_subscription(
+                    old_stripe_id,
+                    reason="Auto ended, new membership",
+                    feedback="other",
+                )
+            except:
+                pass
+
         # Assign new subscriptions
-        _user_sub_object.subscription = subscription_object
-        _user_sub_object.stripe_id = subscription_stripe_id
+        for k, v in updated_sub_options.items():
+            setattr(_user_sub_object, k, v)
         _user_sub_object.save()
 
     context = {}

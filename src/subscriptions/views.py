@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from subscriptions.models import SubscriptionPrice, UserSubscription
-from helpers.billing import get_checkout_session
+from helpers.billing import get_subscription, cancel_subscription
 
 
 @login_required
@@ -13,17 +14,54 @@ def user_subscription_view(
     user_subscription_object, created = UserSubscription.objects.get_or_create(
         user=request.user
     )
-
+    # Can be useful if you have some sort of API services that uses the data
+    # subscription_data = user_subscription_object.serialize()
     if request.method == "POST":
-        print("Refresh Sub")
-    subscription_data = {}
-    if user_subscription_object.stripe_id:
-        subscription_data = get_checkout_session(user_subscription_object.stripe_id)
-    return render(
-        request,
-        "subscriptions/user_detail_view.html",
-        {"subscription": subscription_data},
+        if user_subscription_object.stripe_id:
+            subscription_data = get_subscription(
+                user_subscription_object.stripe_id, raw=False
+            )
+            for k, v in subscription_data.items():
+                setattr(user_subscription_object, k, v)
+            user_subscription_object.save()
+            messages.success(request, "Your subscription has been refreshed")
+        return redirect(user_subscription_object.get_absolute_url())
+
+    context = {
+        "subscription": user_subscription_object,
+    }
+    return render(request, "subscriptions/user_detail_view.html", context)
+
+
+@login_required
+def user_subscription_cancel_view(
+    request,
+):
+    user_subscription_object, created = UserSubscription.objects.get_or_create(
+        user=request.user
     )
+    if request.method == "POST":
+        print("Cancel Sub")
+        if (
+            user_subscription_object.stripe_id
+            and user_subscription_object.is_active_status
+        ):
+            subscription_data = cancel_subscription(
+                user_subscription_object.stripe_id,
+                reason="User wanted to end",
+                feedback="other",
+                raw=False,
+            )
+            for k, v in subscription_data.items():
+                setattr(user_subscription_object, k, v)
+            user_subscription_object.save()
+            messages.success(request, "Your subscription has been cancelled")
+        return redirect(user_subscription_object.get_absolute_url())
+
+    context = {
+        "subscription": user_subscription_object,
+    }
+    return render(request, "subscriptions/user_cancel_view.html", context)
 
 
 def subscription_price_view(request, interval="month"):

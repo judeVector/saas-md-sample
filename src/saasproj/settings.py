@@ -14,6 +14,17 @@ import os
 from decouple import config
 from pathlib import Path
 
+
+# Determine the environment
+ENVIRONMENT = config("ENVIRONMENT", default="development")
+
+# Set the BASE_URL based on the environment
+if ENVIRONMENT == "production":
+    BASE_URL = config("BASE_URL", default="https://saas.up.railway.app/")
+else:
+    BASE_URL = config("BASE_URL", default="http://localhost:8000")
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -47,7 +58,7 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # DEBUG = str(os.environ.get("DJANGO_DEBUG")).lower() == "true"
 DEBUG = config("DJANGO_DEBUG", cast=bool)
 
-BASE_URL = config("BASE_URL", default="http://localhost:8000/")
+BASE_URL = config("BASE_URL", default="http://localhost:8000")
 
 ALLOWED_HOSTS = [".railway.app", "https://saas.up.railway.app"]  # saas,prod.railway.app
 

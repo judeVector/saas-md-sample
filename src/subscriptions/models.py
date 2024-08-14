@@ -155,6 +155,40 @@ class SubscriptionPrice(models.Model):
 
 
 class UserSubscription(models.Model):
+    class SubscriptionStatus(models.TextChoices):
+        ACTIVE = (
+            "active",
+            "Active",
+        )
+        TRIALING = (
+            "trialing",
+            "Trialing",
+        )
+        INCOMPLETE = (
+            "incomplete",
+            "Incomplete",
+        )
+        INCOMPLETE_EXPIRED = (
+            "incomplete_expired",
+            "Incomplete Expired",
+        )
+        PAST_DUE = (
+            "past_due",
+            "Past Due",
+        )
+        CANCELLED = (
+            "cancelled",
+            "Cancelled",
+        )
+        UNPAID = (
+            "unpaid",
+            "Unpaid",
+        )
+        PAUSED = (
+            "paused",
+            "Paused",
+        )
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subscription = models.ForeignKey(
         Subscription, on_delete=models.SET_NULL, null=True, blank=True
@@ -171,6 +205,21 @@ class UserSubscription(models.Model):
     current_period_end = models.DateTimeField(
         auto_now=False, auto_now_add=False, blank=True, null=True
     )
+    status = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+    @property
+    def billing_cycle_anchor(self):
+        """
+        https://docs.stripe.com/payments/checkout/billing-cycle
+
+        Optional delay to start new subscription in stripe checkout
+        """
+        if not self.current_period_end:
+            return None
+        return int(self.current_period_end.timestamp())
 
     def save(self, *args, **kwargs):
         if self.original_period_start is None and self.current_period_start is not None:

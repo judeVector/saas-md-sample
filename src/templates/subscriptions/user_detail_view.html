@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} Your Subscription - {{ block.super }}{% endblock title%}
+
+{% block content %}
+
+<h1 class="text-lg font-medium">Your Subscription</h1>
+
+{% for k, v in subscription.items() %}
+
+<p>{{ k }}: {{ v }}</p>
+
+{% endfor %}
+
+{% endblock %}

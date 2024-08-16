@@ -3,23 +3,29 @@
 {% block title %}{{ page_title }} Your Subscription - {{ block.super }}{% endblock title%}
 
 {% block content %}
-<div class="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
-    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Your Subscription</h1>
+<div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Your Subscription</h1>
 
-    <form action="" method="POST" class="mb-6">
-        {% csrf_token %}
-        <button type="submit"
-            class="px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
-            Refresh
-        </button>
-    </form>
+    <!-- Buttons Container -->
+    <div class="flex space-x-4 mb-6">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button type="submit"
+                class="px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                Refresh
+            </button>
+        </form>
 
-    <a href="{% url 'subscriptions:user_subscription_cancel' %}"
-        class="px-4 py-2 bg-red-600 text-white font-medium rounded hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
-        Cancel Membership
-    </a>
+        <a href="{% url 'subscriptions:user_subscription_cancel' %}"
+            class="px-4 py-2 bg-red-600 text-white font-medium rounded hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+            Cancel Membership
+        </a>
+    </div>
 
-    <div class="space-y-3 text-gray-700">
+    <!-- Subscription Details -->
+    <div class="space-y-4 text-gray-700">
+        <p><span class="font-semibold">Username:</span> {{ user.username }}</p>
+        <p><span class="font-semibold">Email:</span> {{ user.email }}</p>
         <p><span class="font-semibold">Plan name:</span> {{ subscription.plan_name }}</p>
         <p><span class="font-semibold">Status:</span> {{ subscription.status | title }}</p>
         <p><span class="font-semibold">Start:</span> {{ subscription.current_period_start }}</p>

@@ -51,6 +51,7 @@ def user_subscription_cancel_view(
                 reason="User wanted to end",
                 feedback="other",
                 raw=False,
+                cancel_at_period_end=True,
             )
             for k, v in subscription_data.items():
                 setattr(user_subscription_object, k, v)

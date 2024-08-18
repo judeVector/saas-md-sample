@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse
+from django.db.models import Q
 
 from helpers import billing
 

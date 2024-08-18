@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from subscriptions.models import SubscriptionPrice, UserSubscription
-from helpers.billing import get_subscription, cancel_subscription
+from helpers.billing import cancel_subscription
 from subscriptions import utils as subs_utils
 
 
@@ -19,7 +19,7 @@ def user_subscription_view(
     # subscription_data = user_subscription_object.serialize()
     if request.method == "POST":
         finished = subs_utils.refresh_active_users_subscriptions(
-            user_ids=[request.user.id]
+            user_ids=[request.user.id], active_only=False
         )
         if finished:
             messages.success(request, "Your plan details has been refreshed")

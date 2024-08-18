@@ -13,7 +13,8 @@ class Command(BaseCommand):
         # python manage.py sync_user_subs --clear-dangling
         clear_dangling = options.get("clear_dangling")
         if clear_dangling:
-            print("Clearing dangling in-use active subs in Stripe")
+            print("Clearing dangling not in use active subs in Stripe")
             subs_utils.clear_dangling_subs()
         else:
             print("Sync active subs in Stripe")
+            print("Done")

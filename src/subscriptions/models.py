@@ -189,6 +189,25 @@ class SubscriptionStatus(models.TextChoices):
     )
 
 
+class UserSubscriptionQuerySet(models.QuerySet):
+    def by_user_ids(self, user_ids=None):
+        if isinstance(user_ids, list):
+            return self.filter(user_id__in=user_ids)
+        elif isinstance(user_ids, int):
+            return self.filter(user_id__in=[user_ids])
+        elif isinstance(user_ids, str):
+            return self.filter(user_id__in=[user_ids])
+        return self
+
+
+class UserSubscriptionManager(models.Manager):
+    def get_queryset(self):
+        return UserSubscriptionQuerySet(self.model, using=self._db)
+
+    # def by_user_ids(self, user_ids=None):
+    #     return self.get_queryset().by_user_ids(user_ids=user_ids)
+
+
 class UserSubscription(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -211,6 +230,8 @@ class UserSubscription(models.Model):
     status = models.CharField(
         max_length=20, choices=SubscriptionStatus.choices, null=True, blank=True
     )
+
+    object = UserSubscriptionManager()
 
     def get_absolute_url(self):
         return reverse("subscriptions:user_subscription")

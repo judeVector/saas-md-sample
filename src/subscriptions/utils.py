@@ -1,7 +1,40 @@
-from helpers.billing import get_customer_active_subscriptions, cancel_subscription
+from django.db.models import Q
+
+from helpers.billing import (
+    get_customer_active_subscriptions,
+    cancel_subscription,
+    get_subscription,
+)
 
 from customers.models import Customer
-from subscriptions.models import Subscription, UserSubscription
+from subscriptions.models import Subscription, UserSubscription, SubscriptionStatus
+
+
+def refresh_active_users_subscriptions(user_ids=None):
+
+    # active_qs = qs.filter(status=SubscriptionStatus.ACTIVE)
+    # trailing_qs = qs.filter(status=SubscriptionStatus.TRIALING)
+    # qs = qs.filter(active_qs_lookup),filter(user_id__in=user_ids)
+
+    active_qs_lookup = Q(status=SubscriptionStatus.ACTIVE) | Q(
+        status=SubscriptionStatus.TRIALING
+    )
+    qs = UserSubscription.objects.filter(active_qs_lookup)
+
+    if user_ids is not None:
+        qs = qs.by_user_ids(user_ids=user_ids)
+    complete_count = 0
+    qs_count = qs.count()
+    for user_subscription_object in qs:
+        if user_subscription_object.stripe_id:
+            subscription_data = get_subscription(
+                user_subscription_object.stripe_id, raw=False
+            )
+            for k, v in subscription_data.items():
+                setattr(user_subscription_object, k, v)
+            user_subscription_object.save()
+            complete_count += 1
+        return complete_count == qs_count
 
 
 def clear_dangling_subs():

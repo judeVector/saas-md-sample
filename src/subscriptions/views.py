@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from subscriptions.models import SubscriptionPrice, UserSubscription
 from helpers.billing import get_subscription, cancel_subscription
+from subscriptions import utils as subs_utils
 
 
 @login_required
@@ -17,14 +18,15 @@ def user_subscription_view(
     # Can be useful if you have some sort of API services that uses the data
     # subscription_data = user_subscription_object.serialize()
     if request.method == "POST":
-        if user_subscription_object.stripe_id:
-            subscription_data = get_subscription(
-                user_subscription_object.stripe_id, raw=False
+        finished = subs_utils.refresh_active_users_subscriptions(
+            user_ids=[request.user.id]
+        )
+        if finished:
+            messages.success(request, "Your plan details has been refreshed")
+        else:
+            messages.success(
+                request, "Your plan details has not been refreshed, please try again"
             )
-            for k, v in subscription_data.items():
-                setattr(user_subscription_object, k, v)
-            user_subscription_object.save()
-            messages.success(request, "Your subscription has been refreshed")
         return redirect(user_subscription_object.get_absolute_url())
 
     context = {

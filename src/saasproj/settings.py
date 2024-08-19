@@ -85,6 +85,8 @@ INSTALLED_APPS = [
     "subscriptions",
     "customers",
     "checkouts",
+    "landing",
+    "dashboard",
     # Third party apps
     "allauth_ui",
     "allauth",

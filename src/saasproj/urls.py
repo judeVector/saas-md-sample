@@ -24,6 +24,7 @@ urlpatterns = [
     path("", include("visits.urls")),
     path("", include("subscriptions.urls")),
     path("", include("checkouts.urls")),
+    path("", include("landing.urls")),
     path("protected/", pw_protected_view),
     path("protected/user-only", user_only_view),
     path("accounts/", include("allauth.urls")),

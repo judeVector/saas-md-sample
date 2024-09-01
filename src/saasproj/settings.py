@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     "subscriptions",
     "customers",
     "checkouts",
+    "homepage",
     "landing",
     "dashboard",
     # Third party apps

@@ -7,6 +7,6 @@ from landing.views import landing_dashboard_page_view
 app_name = "visits"
 
 urlpatterns = [
-    path("", landing_dashboard_page_view, name="home"),
+    path("", home_view, name="home"),
     path("about/", about_view, name="about"),
 ]
